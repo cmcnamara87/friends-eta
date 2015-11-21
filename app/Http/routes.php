@@ -50,7 +50,7 @@ Route::post('users', function () {
     return response()->json($user);
 });
 
-Route::post('location', function () {
+Route::post('locations', function () {
     $data = \Illuminate\Support\Facades\Input::all();
     $location = \App\Location::create($data);
     return response()->json($location);

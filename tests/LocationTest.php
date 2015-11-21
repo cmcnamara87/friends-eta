@@ -16,7 +16,7 @@ class LocationTest extends TestCase
     public function testCreateLocation()
     {
         $data = ['user_id' => 1, 'lat' => 1.0, 'long' => 2.0];
-        $this->post('/location', $data)
+        $this->post('/locations', $data)
             ->seeJson($data);
         $this->seeInDatabase('locations', $data);
     }

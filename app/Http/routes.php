@@ -18,7 +18,7 @@ Route::get('/', function () {
 
 Route::get('users', function () {
     $users = \App\User::all();
-    return response()->json($users);
+    return response()->json($users, 200, [], JSON_NUMERIC_CHECK);
 });
 
 Route::get('users/{id}/etas', function ($id) {

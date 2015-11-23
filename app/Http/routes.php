@@ -37,9 +37,12 @@ Route::get('users/{id}/etas', function ($id) {
     $distanceMatrix = json_decode(file_get_contents($url), true);
 
     $etas = [];
+
     foreach ($friends->all() as $index => $friend) {
-        $eta = $distanceMatrix['rows'][$index]['elements'][0]['duration']['value'];
-        $etas[] = ['user_id' => $friend->id, 'eta' => $eta];
+        if(isset($distanceMatrix['rows'][$index]['elements'][0]['duration'])){
+            $eta = $distanceMatrix['rows'][$index]['elements'][0]['duration']['value'];
+            $etas[] = ['user_id' => $friend->id, 'eta' => $eta];
+        }
     };
     return response()->json($etas, 200, [], JSON_NUMERIC_CHECK);
 });

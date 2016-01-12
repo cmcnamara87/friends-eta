@@ -49,7 +49,7 @@ Route::get('users/{id}/etas', function ($id) {
 
 Route::post('users', function () {
     $data = \Illuminate\Support\Facades\Input::all();
-    $user = \App\User::create($data);
+    $user = \App\User::firstOrCreate($data);
     return response()->json($user);
 });
 

@@ -49,7 +49,12 @@ Route::get('users/{id}/etas', function ($id) {
 
 Route::post('users', function () {
     $data = \Illuminate\Support\Facades\Input::all();
-    $user = \App\User::firstOrCreate($data);
+    $user = \App\User::where('fb_id', '=', $data['fb_id'])->get();
+    if(!$user) {
+        $user = new \App\User();
+    }
+    $user->fill($data);
+    $user->save();
     return response()->json($user);
 });
 

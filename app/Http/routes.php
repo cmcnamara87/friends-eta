@@ -48,7 +48,7 @@ Route::get('users/{id}/etas', function ($id) {
 });
 
 Route::get('users/{id}/friends', function($userId) {
-    $userIds = \App\Friendships::where('user_id', '=', $userId)->list('friend_id');
+    $userIds = \App\Friendships::where('user_id', '=', $userId)->lists('friend_id');
     $users = \App\User::whereIn('id', $userIds)->get();
     return response()->json($users, 200, [], JSON_NUMERIC_CHECK);
 });

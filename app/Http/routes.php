@@ -49,7 +49,7 @@ Route::get('users/{id}/etas', function ($id) {
 
 Route::post('users', function () {
     $data = \Illuminate\Support\Facades\Input::all();
-    $user = \App\User::where('fb_id', '=', $data['fb_id'])->get();
+    $user = \App\User::where('fb_id', '=', $data['fb_id'])->first();
     if(!$user) {
         $user = new \App\User();
     }

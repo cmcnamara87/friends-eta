@@ -61,7 +61,7 @@ Route::post('users/{id}/friends', function($userId) {
     $fbFriends = \Illuminate\Support\Facades\Input::all();
     foreach($fbFriends as $fbFriend) {
         // find user with fb id
-        $friend = User::where('fb_id', '=', $fbFriend['fb_id'])->first();
+        $friend = \App\User::where('fb_id', '=', $fbFriend['fb_id'])->first();
         // save friendship
         \App\Friendships::create([
             "user_id" => $userId,

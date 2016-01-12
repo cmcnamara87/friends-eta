@@ -47,6 +47,29 @@ Route::get('users/{id}/etas', function ($id) {
     return response()->json($etas, 200, [], JSON_NUMERIC_CHECK);
 });
 
+Route::get('users/{id}/friends', function($userId) {
+    $userIds = \App\Friendships::where('user_id', '=', $userId)->list('friend_id');
+    $users = \App\User::whereIn('id', $userIds)->get();
+    return response()->json($users, 200, [], JSON_NUMERIC_CHECK);
+});
+Route::post('users/{id}/friends', function($userId) {
+    // delete this users current friends
+    $friendships = \App\Friendships::where('user_id', '=', $userId)->get();
+    foreach($friendships as $friendship) {
+        $friendship->delete();
+    }
+    $fbFriends = \Illuminate\Support\Facades\Input::all();
+    foreach($fbFriends as $fbFriend) {
+        // find user with fb id
+        $friend = User::where('fb_id', '=', $fbFriend['fb_id'])->first();
+        // save friendship
+        \App\Friendships::create([
+            "user_id" => $userId,
+            "friend_id" => $friend->id
+        ]);
+    }
+});
+
 Route::post('users', function () {
     $data = \Illuminate\Support\Facades\Input::all();
     $user = \App\User::where('fb_id', '=', $data['fb_id'])->first();

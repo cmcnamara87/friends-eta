@@ -54,7 +54,7 @@ Route::get('users/{id}/etas', function ($id) {
         // previous location
         $friendPrevLocation = $locations->last();
         $friendPrevCoordinate = new \Location\Coordinate($friendPrevLocation->lat, $friendPrevLocation->long);
-        $friendPrevDistance = $calculator->getDistance($userCurrentCoordinate, $friendPrevLocation);
+        $friendPrevDistance = $calculator->getDistance($userCurrentCoordinate, $friendPrevCoordinate);
 
         // calculate direction
         $minMoveDistance = 50; // 50 meters

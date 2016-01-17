@@ -24,11 +24,14 @@ Route::get('users', function () {
 Route::get('users/{id}/etas', function ($id) {
     $user = \App\User::find($id);
     $friends = \App\User::where('id', '!=', $id)->get();
+
     $userCurrentLocation = \App\Location::where('user_id', '=', $user->id)->orderBy('id', 'desc')->first();
     $friendsLocations = array_map(function ($friend) {
-        return \App\Location::where('user_id', '=', $friend->id)->orderBy('id', 'desc')->first();
+        return \App\Location::where('user_id', '=', $friend->id)->orderBy('id', 'desc')->take(2)->get();
     }, $friends->all());
-    $origin = array_reduce($friendsLocations, function ($carry, $location) {
+
+    $origin = array_reduce($friendsLocations, function ($carry, $locations) {
+        $location = $locations->first();
         return $carry . '|' . $location->lat . ',' . $location->long;
     }, '');
     $destination = $userCurrentLocation->lat . ',' . $userCurrentLocation->long;

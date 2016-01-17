@@ -44,7 +44,7 @@ Route::get('users/{id}/etas', function ($id) {
             $etas[] = [
                 'user_id' => $location->user_id,
                 'eta' => $eta,
-                'last_seen_at' => $location->created_at
+                'last_seen_at' => $location->created_at->timestamp
             ];
         }
     };

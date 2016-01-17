@@ -42,13 +42,38 @@ Route::get('users/{id}/etas', function ($id) {
     $etas = [];
 
     foreach ($friendsLocations as $index => $locations) {
-        $location = $locations->first();
+        $calculator = new \Location\Distance\Vincenty();
+
+        $userCurrentCoordinate = new \Location\Coordinate($userCurrentLocation->lat, $userCurrentLocation->long);
+
+        // current location
+        $friendCurrentLocation = $locations->first();
+        $friendCurrentCoordinate = new \Location\Coordinate($friendCurrentLocation->lat, $friendCurrentLocation->long);
+        $friendCurrentDistance = $calculator->getDistance($userCurrentCoordinate, $friendCurrentCoordinate);
+
+        // previous location
+        $friendPrevLocation = $locations->last();
+        $friendPrevCoordinate = new \Location\Coordinate($friendPrevLocation->lat, $friendPrevLocation->long);
+        $friendPrevDistance = $calculator->getDistance($userCurrentCoordinate, $friendPrevLocation);
+
+        // calculate direction
+        $minMoveDistance = 50; // 50 meters
+        if(abs($friendCurrentDistance - $friendPrevDistance) < $minMoveDistance) {
+            // in the last 2 readings, they havent moved 50 meters
+            $direction = 'stationary';
+        } else if($friendCurrentDistance < $friendPrevCoordinate) {
+            $direction = 'towards';
+        } else {
+            $direction = 'away';
+        }
+
         if(isset($distanceMatrix['rows'][$index]['elements'][0]['duration'])){
             $eta = $distanceMatrix['rows'][$index]['elements'][0]['duration']['value'];
             $etas[] = [
-                'user_id' => $location->user_id,
+                'user_id' => $friendCurrentLocation->user_id,
                 'eta' => $eta,
-                'last_seen_at' => $location->created_at->timestamp
+                'last_seen_at' => $friendCurrentLocation->created_at->timestamp,
+                'direction' => $direction
             ];
         }
     };

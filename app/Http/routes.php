@@ -79,7 +79,8 @@ Route::get('users/{id}/etas', function ($id) {
                 'last_seen' => $friendCurrentLocation->created_at,
                 'direction' => $direction,
                 'current_distance' => $friendCurrentDistance,
-                'previous_distance' => $friendPrevDistance
+                'previous_distance' => $friendPrevDistance,
+                'changed_distance' => $friendCurrentDistance - $friendPrevDistance
             ];
         }
     };

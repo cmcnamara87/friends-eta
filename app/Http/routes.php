@@ -61,7 +61,7 @@ Route::get('users/{id}/etas', function ($id) {
         if(abs($friendCurrentDistance - $friendPrevDistance) < $minMoveDistance) {
             // in the last 2 readings, they havent moved 50 meters
             $direction = 'stationary';
-        } else if($friendCurrentDistance < $friendPrevCoordinate) {
+        } else if($friendCurrentDistance < $friendPrevDistance) {
             $direction = 'towards';
         } else {
             $direction = 'away';

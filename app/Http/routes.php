@@ -58,7 +58,10 @@ Route::get('users/{id}/etas', function ($id) {
 
         // calculate direction
         $minMoveDistance = 50; // 50 meters
-        if(abs($friendCurrentDistance - $friendPrevDistance) < $minMoveDistance) {
+        if ($friendCurrentLocation->created_at->lt(\Carbon\Carbon::now()->subMinute(10))) {
+            // the current location is old (older than 10 minutes)
+            $direction = 'stationary';
+        } else if(abs($friendCurrentDistance - $friendPrevDistance) < $minMoveDistance) {
             // in the last 2 readings, they havent moved 50 meters
             $direction = 'stationary';
         } else if($friendCurrentDistance < $friendPrevDistance) {

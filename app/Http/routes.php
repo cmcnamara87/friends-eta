@@ -41,7 +41,11 @@ Route::get('users/{id}/etas', function ($id) {
     foreach ($friendsLocations as $index => $location) {
         if(isset($distanceMatrix['rows'][$index]['elements'][0]['duration'])){
             $eta = $distanceMatrix['rows'][$index]['elements'][0]['duration']['value'];
-            $etas[] = ['user_id' => $location->user_id, 'eta' => $eta];
+            $etas[] = [
+                'user_id' => $location->user_id,
+                'eta' => $eta,
+                'last_seen_at' => $location->created_at
+            ];
         }
     };
     return response()->json($etas, 200, [], JSON_NUMERIC_CHECK);

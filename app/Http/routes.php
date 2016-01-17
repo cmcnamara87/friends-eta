@@ -41,7 +41,8 @@ Route::get('users/{id}/etas', function ($id) {
 
     $etas = [];
 
-    foreach ($friendsLocations as $index => $location) {
+    foreach ($friendsLocations as $index => $locations) {
+        $location = $locations->first();
         if(isset($distanceMatrix['rows'][$index]['elements'][0]['duration'])){
             $eta = $distanceMatrix['rows'][$index]['elements'][0]['duration']['value'];
             $etas[] = [

@@ -122,6 +122,24 @@ Route::post('users', function () {
 
 Route::post('locations', function () {
     $data = \Illuminate\Support\Facades\Input::all();
-    $location = \App\Location::create($data);
-    return response()->json($location);
+
+    // last location
+    $previousLocation = \App\Location::where('user_id', '=', $data['user_id'])
+        ->orderBy('id', 'desc')->first();
+
+    // new location
+    $currentLocation = \App\Location::create($data);
+
+    // check the distance between the two
+    // if its less than 50 meters, delete the previous one
+    // this should fix the problem of people refreshing constantly in the app
+    $calculator = new \Location\Distance\Vincenty();
+    $currentCoordinate = new \Location\Coordinate($currentLocation->lat, $currentLocation->long);
+    $previousCoordinate = new \Location\Coordinate($previousLocation->lat, $previousLocation->long);
+    $distance = $calculator->getDistance($currentCoordinate, $previousCoordinate);
+    if($distance < 50) {
+        // delete the older one, we have basically replaced it, because they havent moved
+        $previousLocation->delete();
+    }
+    return response()->json($currentLocation);
 });

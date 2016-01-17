@@ -73,7 +73,9 @@ Route::get('users/{id}/etas', function ($id) {
                 'user_id' => $friendCurrentLocation->user_id,
                 'eta' => $eta,
                 'last_seen_at' => $friendCurrentLocation->created_at->timestamp,
-                'direction' => $direction
+                'direction' => $direction,
+                'current_distance' => $friendCurrentDistance,
+                'previous_distance' => $friendPrevDistance
             ];
         }
     };

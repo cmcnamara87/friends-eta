@@ -17,6 +17,10 @@ Route::get('/', function () {
 Route::get('/push', function() {
     $users = \App\User::all();
     foreach($users as $user) {
+        if(!$user->push_token) {
+            continue;
+        }
+        echo $user->push_token . '<br/>';
         \Davibennun\LaravelPushNotification\Facades\PushNotification::app('appNameIOS')
             ->to($user->push_token)
             ->send('Hello World, i`m a push message');

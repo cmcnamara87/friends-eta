@@ -14,7 +14,15 @@
 Route::get('/', function () {
     return view('welcome');
 });
-
+Route::get('/push', function() {
+    $users = \App\User::all();
+    foreach($users as $user) {
+        \Davibennun\LaravelPushNotification\Facades\PushNotification::app('appNameIOS')
+            ->to($user->push_token)
+            ->send('Hello World, i`m a push message');
+    }
+    echo 'pushed';
+});
 
 Route::get('users', function () {
     $users = \App\User::all();
@@ -155,3 +163,4 @@ Route::post('locations', function () {
     }
     return response()->json($currentLocation);
 });
+

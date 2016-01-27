@@ -28,8 +28,8 @@ Route::get('/push', function() {
     echo 'pushed';
 });
 Route::post('users/{userId}/ping/{friendId}', function($userId, $friendId) {
-    $user = User::find($userId);
-    $friend = User::find($friendId);
+    $user = \App\User::find($userId);
+    $friend = \App\User::find($friendId);
     if($friend->push_token) {
         \Davibennun\LaravelPushNotification\Facades\PushNotification::app('appNameIOS')
             ->to($friend->push_token)

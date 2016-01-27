@@ -61,16 +61,16 @@ Route::get('users/{id}/etas', function ($id) {
         if ($friendCurrentLocation->created_at->lt(\Carbon\Carbon::now()->subMinute(10))) {
             // the current location is old (older than 10 minutes)
             $direction = 'stationary';
-        } else if(abs($friendCurrentDistance - $friendPrevDistance) < $minMoveDistance) {
+        } else if (abs($friendCurrentDistance - $friendPrevDistance) < $minMoveDistance) {
             // in the last 2 readings, they havent moved 50 meters
             $direction = 'stationary';
-        } else if($friendCurrentDistance < $friendPrevDistance) {
+        } else if ($friendCurrentDistance < $friendPrevDistance) {
             $direction = 'towards';
         } else {
             $direction = 'away';
         }
 
-        if(isset($distanceMatrix['rows'][$index]['elements'][0]['duration'])){
+        if (isset($distanceMatrix['rows'][$index]['elements'][0]['duration'])) {
             $eta = $distanceMatrix['rows'][$index]['elements'][0]['duration']['value'];
             $etas[] = [
                 'user_id' => $friendCurrentLocation->user_id,
@@ -87,19 +87,19 @@ Route::get('users/{id}/etas', function ($id) {
     return response()->json($etas, 200, [], JSON_NUMERIC_CHECK);
 });
 
-Route::get('users/{id}/friends', function($userId) {
+Route::get('users/{id}/friends', function ($userId) {
     $userIds = \App\Friendships::where('user_id', '=', $userId)->lists('friend_id');
     $users = \App\User::whereIn('id', $userIds)->get();
     return response()->json($users, 200, [], JSON_NUMERIC_CHECK);
 });
-Route::post('users/{id}/friends', function($userId) {
+Route::post('users/{id}/friends', function ($userId) {
     // delete this users current friends
     $friendships = \App\Friendships::where('user_id', '=', $userId)->get();
-    foreach($friendships as $friendship) {
+    foreach ($friendships as $friendship) {
         $friendship->delete();
     }
     $fbFriends = \Illuminate\Support\Facades\Input::all();
-    foreach($fbFriends as $fbFriend) {
+    foreach ($fbFriends as $fbFriend) {
         // find user with fb id
         $friend = \App\User::where('fb_id', '=', $fbFriend['fb_id'])->first();
         // save friendship
@@ -112,15 +112,26 @@ Route::post('users/{id}/friends', function($userId) {
 
 Route::post('users', function () {
     $data = \Illuminate\Support\Facades\Input::all();
-    $user = \App\User::where('fb_id', '=', $data['fb_id'])->first();
-    if(!$user) {
+    if (isset($data['fb_id'])) {
+        $user = \App\User::where('fb_id', '=', $data['fb_id'])->first();
+    }
+    if (isset($data['id'])) {
+        $user = \App\User::where('id', '=', $data['id'])->first();
+    }
+    if (!$user) {
         $user = new \App\User();
     }
     $user->fill($data);
     $user->save();
     return response()->json($user);
 });
-
+Route::put('users/{id}', function ($id) {
+    $data = \Illuminate\Support\Facades\Input::all();
+    $user = \App\User::where('id', '=', $id)->firstOrFail();
+    $user->fill($data);
+    $user->save();
+    return response()->json($user);
+});
 Route::post('locations', function () {
     $data = \Illuminate\Support\Facades\Input::all();
 
@@ -138,7 +149,7 @@ Route::post('locations', function () {
     $currentCoordinate = new \Location\Coordinate($currentLocation->lat, $currentLocation->long);
     $previousCoordinate = new \Location\Coordinate($previousLocation->lat, $previousLocation->long);
     $distance = $calculator->getDistance($currentCoordinate, $previousCoordinate);
-    if($distance < 50) {
+    if ($distance < 50) {
         // delete the older one, we have basically replaced it, because they havent moved
         $previousLocation->delete();
     }

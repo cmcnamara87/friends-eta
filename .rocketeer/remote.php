@@ -32,7 +32,8 @@ return [
     'shared'         => [
         'storage/logs',
         'storage/sessions',
-        '.env'
+        '.env',
+        'app/PushNotifications/ck.pem'
     ],
 
     // Execution
